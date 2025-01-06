@@ -1,0 +1,46 @@
+services:
+  leonweb:
+    # image: php:8.1-apache
+    # command: docker-php-ext-install mysqli && apache2-foreground
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: php_build_stage
+    container_name: apache-php-leon
+    ports:
+      - "8080:80"
+    volumes:
+      - ./htdocs:/var/www/html
+    depends_on:
+      - leondb
+
+  leondb:
+    # image: mysql:8.4
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: mysql_build_stage
+    container_name: mysql-leon
+    environment:
+      MYSQL_ROOT_PASSWORD: "hLP3HY28gDW5pwG6yt"
+      MYSQL_DATABASE: yourwayshop_db
+      MYSQL_USER: yws_user
+      MYSQL_PASSWORD: "yws_pass"
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # leonphpmyadmin:
+  #   image: phpmyadmin:latest
+  #   container_name: phpmyadmin-leon
+  #   ports:
+  #     - "8081:80"
+  #   environment:
+  #     PMA_HOST: leondb
+  #     MYSQL_ROOT_PASSWORD: hLP3HY28gDW5pwG6yt
+  #   depends_on:
+  #     - leondb
+
+volumes:
+  db_data:
